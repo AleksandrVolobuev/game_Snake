@@ -1,6 +1,7 @@
-const gameArea = document.getElementById("gameArea");
-const gameMusic = document.getElementById("gameMusic");
-const scoreDisplay = document.getElementById("score");
+const gameArea = document.querySelector(".gameArea");
+const gameMusic = document.querySelector(".gameMusic");
+const scoreDisplay = document.querySelector(".score");
+const gameOverText = document.querySelector(".gameOverText");
 
 gameMusic.volume = 0.5; // Громкость музыки
 
@@ -12,7 +13,7 @@ let food = { x: 100, y: 100 }; // Начальная позиция еды
 let gameOver = false; // Флаг окончания игры
 let musicStarted = false; // Флаг для отслеживания запуска музыки
 let obstacles = []; // Массив препятствий
-let delay = 200; // Начальная задержка в миллисекундах
+let delay = 250; // Начальная задержка (скорость игры)
 
 // Запуск музыки
 function startMusic() {
@@ -22,7 +23,7 @@ function startMusic() {
   }
 }
 
-// Отрисовка змейки
+// Функция для отрисовки змейки
 function drawSnake() {
   gameArea.innerHTML = "";
   snake.forEach(segment => {
@@ -36,7 +37,7 @@ function drawSnake() {
   });
 }
 
-// Отрисовка еды
+// Функция для отрисовки еды
 function drawFood() {
   const foodElement = document.createElement("img");
   foodElement.className = "food";
@@ -47,7 +48,7 @@ function drawFood() {
   gameArea.appendChild(foodElement);
 }
 
-// Отрисовка препятствий
+// Функция для отрисовки препятствий
 function drawObstacles() {
   obstacles.forEach(obstacle => {
     const obstacleElement = document.createElement("img");
@@ -58,6 +59,21 @@ function drawObstacles() {
     obstacleElement.style.top = `${obstacle.y}px`;
     gameArea.appendChild(obstacleElement);
   });
+}
+
+// Функция генерации новой еды
+function generateFood() {
+  let newFood;
+  do {
+    newFood = {
+      x: Math.floor(Math.random() * (gameArea.clientWidth / tileSize)) * tileSize,
+      y: Math.floor(Math.random() * (gameArea.clientHeight / tileSize)) * tileSize,
+    };
+  } while (
+    snake.some(seg => seg.x === newFood.x && seg.y === newFood.y) ||
+    obstacles.some(obs => obs.x === newFood.x && obs.y === newFood.y)
+  );
+  return newFood;
 }
 
 // Управление змейкой
@@ -74,13 +90,12 @@ function update() {
   if (gameOver) return;
 
   let head = { ...snake[0] };
-
   if (direction === "UP") head.y -= tileSize;
   if (direction === "DOWN") head.y += tileSize;
   if (direction === "LEFT") head.x -= tileSize;
   if (direction === "RIGHT") head.x += tileSize;
 
-  // Проверка столкновений (со стенами или препятствиями)
+  // Проверка столкновений
   if (
     head.x < 0 || head.x >= gameArea.clientWidth ||
     head.y < 0 || head.y >= gameArea.clientHeight ||
@@ -89,29 +104,20 @@ function update() {
   ) {
     gameOver = true;
     gameMusic.pause();
-
-    // Вывод "Game Over"
-    const gameOverText = document.getElementById("gameOverText");
     gameOverText.style.opacity = "1";
     gameOverText.style.fontSize = "150px";
-
     return;
   }
 
   snake.unshift(head);
 
-  // Если съедено яблоко
+  // Проверка, съела ли змейка яблоко
   if (head.x === food.x && head.y === food.y) {
     score++;
     scoreDisplay.textContent = `Яблок съедено: ${score}`;
+    food = generateFood();
 
-    // Генерируем новую еду
-    food = {
-      x: Math.floor(Math.random() * (gameArea.clientWidth / tileSize)) * tileSize,
-      y: Math.floor(Math.random() * (gameArea.clientHeight / tileSize)) * tileSize,
-    };
-
-    // Добавляем препятствие
+    // Генерация нового препятствия
     let newObstacle;
     do {
       newObstacle = {
@@ -122,10 +128,9 @@ function update() {
       snake.some(seg => seg.x === newObstacle.x && seg.y === newObstacle.y) ||
       (food.x === newObstacle.x && food.y === newObstacle.y)
     );
-
     obstacles.push(newObstacle);
 
-    // Уменьшаем задержку, но не меньше 50 мс
+    // Уменьшаем задержку (увеличиваем скорость), но не меньше 50 мс
     delay = Math.max(delay - 1, 50);
   } else {
     snake.pop();
@@ -138,7 +143,7 @@ function gameLoop() {
   drawSnake();
   drawFood();
   drawObstacles();
-  if (!gameOver) setTimeout(gameLoop, delay); // Используем текущую задержку
+  if (!gameOver) setTimeout(gameLoop, delay);
 }
 
 // Запуск игры

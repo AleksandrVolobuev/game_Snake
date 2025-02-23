@@ -8,10 +8,9 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-
 }
 
-#gameArea {
+.gameArea {
   position: relative;
   width: 1200px;
   height: 700px;
@@ -27,22 +26,14 @@ body {
   height: 60px;
 }
 
-.food {
-  position: absolute;
-  width: 50px;
-  /* Размер яблока */
-  height: 50px;
-  /* Размер яблока */
-}
+.food,
 .obstacle {
   position: absolute;
   width: 50px;
-  /* Размер яблока */
   height: 50px;
-  /* Размер яблока */
 }
 
-#gameOverText {
+.gameOverText {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -59,7 +50,7 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-#score {
+.score {
   position: absolute;
   top: 20px;
   left: 50%;
