@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="./assets/js/index.js" defer></script>
-    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/style.css" />
     <title>Игра Змейка</title>
-   
-</head>
-<body>
-    <canvas id="gameCanvas" ></canvas>
-   
-</body>
+  </head>
+  <body>
+    <div id="score">Яблок съедено: 0</div>
+    <main>
+      <audio id="gameMusic" src="./assets/audio/muzik.mp3" loop></audio>
+      <div id="gameArea"></div>
+      <div id="gameOverText">Game Over</div>
+    </main>
+  </body>
 </html>

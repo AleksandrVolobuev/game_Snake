@@ -3,4 +3,64 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+
+}
+
+#gameArea {
+  position: relative;
+  width: 1200px;
+  height: 700px;
+  border: 2px solid #000;
+  box-shadow: 0px 10px 20px 5px rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+}
+
+.snake {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+}
+
+.food {
+  position: absolute;
+  width: 50px;
+  /* Размер яблока */
+  height: 50px;
+  /* Размер яблока */
+}
+
+#gameOverText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0;
+  transition: font-size 0.5s ease, opacity 0.5s ease;
+
+  background: linear-gradient(45deg, red, orange, yellow);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#score {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: red;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
 }
