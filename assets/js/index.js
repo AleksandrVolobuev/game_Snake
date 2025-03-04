@@ -23,57 +23,55 @@ function startMusic() {
   }
 }
 
-// Функция для отрисовки змейки
+// Универсальная функция отрисовки объектов
+function drawObject(object, className, imageSrc) {
+  const element = document.createElement("img");
+  element.className = className;
+  element.src = imageSrc;
+  element.style.position = "absolute";
+  element.style.left = `${object.x}px`;
+  element.style.top = `${object.y}px`;
+  gameArea.appendChild(element);
+}
+
+// Функция отрисовки змейки
 function drawSnake() {
   gameArea.innerHTML = "";
-  snake.forEach(segment => {
-    const snakeSegment = document.createElement("img");
-    snakeSegment.className = "snake";
-    snakeSegment.src = "./assets/img/snake1.png";
-    snakeSegment.style.position = "absolute";
-    snakeSegment.style.left = `${segment.x}px`;
-    snakeSegment.style.top = `${segment.y}px`;
-    gameArea.appendChild(snakeSegment);
-  });
+  snake.forEach(segment => drawObject(segment, "snake", "./assets/img/snake1.png"));
 }
 
-// Функция для отрисовки еды
+// Функция отрисовки еды
 function drawFood() {
-  const foodElement = document.createElement("img");
-  foodElement.className = "food";
-  foodElement.src = "./assets/img/apple.png";
-  foodElement.style.position = "absolute";
-  foodElement.style.left = `${food.x}px`;
-  foodElement.style.top = `${food.y}px`;
-  gameArea.appendChild(foodElement);
+  drawObject(food, "food", "./assets/img/apple.png");
 }
 
-// Функция для отрисовки препятствий
+// Функция отрисовки препятствий
 function drawObstacles() {
-  obstacles.forEach(obstacle => {
-    const obstacleElement = document.createElement("img");
-    obstacleElement.className = "obstacle";
-    obstacleElement.src = "./assets/img/weel.png";
-    obstacleElement.style.position = "absolute";
-    obstacleElement.style.left = `${obstacle.x}px`;
-    obstacleElement.style.top = `${obstacle.y}px`;
-    gameArea.appendChild(obstacleElement);
-  });
+  obstacles.forEach(obstacle => drawObject(obstacle, "obstacle", "./assets/img/weel.png"));
 }
 
-// Функция генерации новой еды
-function generateFood() {
-  let newFood;
+// Универсальная функция генерации объектов (еда или препятствия)
+function generateGameObject(existingObjects) {
+  let newObject;
   do {
-    newFood = {
+    newObject = {
       x: Math.floor(Math.random() * (gameArea.clientWidth / tileSize)) * tileSize,
       y: Math.floor(Math.random() * (gameArea.clientHeight / tileSize)) * tileSize,
     };
   } while (
-    snake.some(seg => seg.x === newFood.x && seg.y === newFood.y) ||
-    obstacles.some(obs => obs.x === newFood.x && obs.y === newFood.y)
+    snake.some(seg => seg.x === newObject.x && seg.y === newObject.y) ||
+    existingObjects.some(obj => obj.x === newObject.x && obj.y === newObject.y)
   );
-  return newFood;
+  return newObject;
+}
+
+// Функции для генерации еды и препятствий
+function generateFood() {
+  return generateGameObject(obstacles);
+}
+
+function generateObstacle() {
+  return generateGameObject([...obstacles, food]); // Исключаем наложение на еду
 }
 
 // Управление змейкой
@@ -116,22 +114,8 @@ function update() {
     score++;
     scoreDisplay.textContent = `Яблок съедено: ${score}`;
     food = generateFood();
-
-    // Генерация нового препятствия
-    let newObstacle;
-    do {
-      newObstacle = {
-        x: Math.floor(Math.random() * (gameArea.clientWidth / tileSize)) * tileSize,
-        y: Math.floor(Math.random() * (gameArea.clientHeight / tileSize)) * tileSize,
-      };
-    } while (
-      snake.some(seg => seg.x === newObstacle.x && seg.y === newObstacle.y) ||
-      (food.x === newObstacle.x && food.y === newObstacle.y)
-    );
-    obstacles.push(newObstacle);
-
-    // Уменьшаем задержку (увеличиваем скорость), но не меньше 50 мс
-    delay = Math.max(delay - 1, 50);
+    obstacles.push(generateObstacle()); // Добавляем новое препятствие
+    delay = Math.max(delay - 5, 50); // Уменьшаем задержку, но не меньше 50 мс
   } else {
     snake.pop();
   }
